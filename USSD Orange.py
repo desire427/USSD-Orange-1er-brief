@@ -9,23 +9,62 @@ def sauvegarder_solde():
 fichier = "solde.json"
 argent = {"solde": 100000}
 
+
 # ================= Gestion de l'historique des transferts =================
 fichier_tran = "historique_transfert.json"
 
+tran_eff = []
+trans_annule = []
+historique = []
+
 if os.path.exists(fichier_tran):
-    with open(fichier_tran, "r", encoding="utf-8") as f:
-        tran_eff = json.load(f)
+    try:
+        with open(fichier_tran, "r", encoding="utf-8") as f:
+            contenu = f.read().strip()
+            if contenu == "":
+                historique = [tran_eff, trans_annule]
+            else:
+                historique = json.loads(contenu)
+
+        if len(historique) == 2:
+            tran_eff = historique[0]
+            trans_annule = historique[1]
+        else:
+            historique = [tran_eff, trans_annule]
+
+    except json.JSONDecodeError:
+        historique = [tran_eff, trans_annule]
+
 else:
-    tran_eff = []
     with open(fichier_tran, "w", encoding="utf-8") as f:
-        json.dump(tran_eff, f, indent=4)
+        json.dump([tran_eff, trans_annule], f, indent=4)
+
 
 def sauvegarder_tran():
+    print("\n====================================")
     with open(fichier_tran, "w", encoding="utf-8") as f:
-        json.dump(tran_eff, f, indent=4)
+        json.dump([tran_eff, trans_annule], f, indent=4)
 
     with open(fichier_tran, "r", encoding="utf-8") as f:
+        resul = json.load(f)
+
+        print("=== TRANSFERTS EFFECTUES ===")
+        k = 1
+        for i in resul[0]:
+            print(f"{k}. le numero est: {i['numero']} et le montant est: {i['montant']}")
+            k += 1
+
+        print("=== TRANSFERTS ANNULES ===")
+        w = 1
+        for i in resul[1]:
+            print(f"{w}. le numero est: {i['numero']} et le montant est: {i['montant']}")
+            w += 1
+        print("====================================")
+
+def affichage_tran():
+    with open(fichier_tran, "r", encoding="utf-8") as f:
         print(json.load(f))
+
 # ==========================================================================
 
 if os.path.exists(fichier):
@@ -47,7 +86,7 @@ def retour_while_true():
             break
         else:
             print("====================================")
-            print("Vous ne pouvez que taper sur 0 pour retourner au menu.")
+            print("Vous ne pouvez que taper sur Entrer pour retourner au menu.")
             print("====================================")
             print()
 
@@ -63,7 +102,6 @@ def consulter_solde():
 # =================================== Fonction pour achecter du credit ===============================
 def acheter_credit():
     indicateur = "+221"
-    montant = 0
     mot_pass()
 
     while True:
@@ -79,7 +117,6 @@ def acheter_credit():
             print("====================================")
             break
         else:
-            print("==============")
             while True:
                 numero = input(f"Veuillez saisir le numero {indicateur}: ")
                 numero = numero.replace(" ", "")
@@ -100,8 +137,6 @@ def acheter_credit():
 # =================================== Fonction pour effectuer un transfert =========================
 def effectuer_transfert():
     indicateur = "+221"
-    montant = 0
-
     mot_pass()
 
     while True:
@@ -131,6 +166,7 @@ def effectuer_transfert():
                 "numero": f"{indicateur}{numero}",
                 "montant": montant
             })
+
             sauvegarder_tran()
             sauvegarder_solde()
 
@@ -143,13 +179,17 @@ def effectuer_transfert():
 
 # ========================== Annuler la transaction 
 def annule_tran():
-    print("vous voulez annuler le dernier transfert")
     if len(tran_eff) == 0:
-        print("Vous n'avez pas effectuer de trasaction")
+        print("Vous n'avez pas effectuer de transaction")
     else:
         mot_pass()
-        argent["solde"] += tran_eff[-1]["montant"]
+        dernier = tran_eff.pop()
+        argent["solde"] += dernier["montant"]
+        trans_annule.append(dernier)
+
         sauvegarder_solde()
+        sauvegarder_tran()
+
         print("Vous avez annule votre dernier transfert")
         retour_while_true()
 
@@ -213,18 +253,14 @@ def menu_forfait():
 def mot_pass():
     mot_depass = 1234
     while True:
-        print("\nVous voullez effectuer une transaction")
         try:
-            print("\n===================================")
             mot_depass_saisi = int(input("Veuillez entre votre mot de passe: "))
-            print("===================================\n")
         except:
             print("Le mot de passe doit etre numerique.\n")
             continue
 
         if mot_depass_saisi != mot_depass:
             print("Votre mot de passe est incorrect\n")
-            print("===================================")
         else:
             break
 
@@ -233,9 +269,7 @@ def mot_pass():
 def menu_code():
     code = '#144#'
     while True:
-        print("====================================")
         code_utilisateur = input("Entrer le code: ")
-        print("====================================")
         if code_utilisateur != code:
             print("Votre code est incorect")
         else:
