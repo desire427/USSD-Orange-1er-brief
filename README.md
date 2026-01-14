@@ -198,7 +198,7 @@ Elle :
 
 - Travail individuel
 - Durée estimée : 6 heures
-- Environnement : ligne de commande
+- Environnement : Jupyter lab
 - Versionnement du projet avec Git
 
 ---
@@ -210,5 +210,5 @@ Il met en pratique les fondamentaux de la programmation Python, la gestion des f
 
 ---
 
-Auteur : ALPHONSE DESIRE HABA 
+Auteur : ALPHONSE DESIRE HABA   
 Formation : Développeur Web / Web Mobile + (IA)
