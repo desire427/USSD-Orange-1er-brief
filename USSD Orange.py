@@ -8,7 +8,25 @@ def sauvegarder_solde():
 
 fichier = "solde.json"
 argent = {"solde": 100000}
-tran_eff = []
+
+# ================= Gestion de l'historique des transferts =================
+fichier_tran = "historique_transfert.json"
+
+if os.path.exists(fichier_tran):
+    with open(fichier_tran, "r", encoding="utf-8") as f:
+        tran_eff = json.load(f)
+else:
+    tran_eff = []
+    with open(fichier_tran, "w", encoding="utf-8") as f:
+        json.dump(tran_eff, f, indent=4)
+
+def sauvegarder_tran():
+    with open(fichier_tran, "w", encoding="utf-8") as f:
+        json.dump(tran_eff, f, indent=4)
+
+    with open(fichier_tran, "r", encoding="utf-8") as f:
+        print(json.load(f))
+# ==========================================================================
 
 if os.path.exists(fichier):
     with open(fichier, "r", encoding="utf-8") as f:
@@ -107,7 +125,13 @@ def effectuer_transfert():
                     print("Veuillez saisir un numero de 9 chiffres.")
 
             argent["solde"] -= montant
-            tran_eff.append(montant)
+
+            tran_eff.append({
+                "id": len(tran_eff) + 1,
+                "numero": f"{indicateur}{numero}",
+                "montant": montant
+            })
+            sauvegarder_tran()
             sauvegarder_solde()
 
             print("\n===================================")
@@ -124,7 +148,7 @@ def annule_tran():
         print("Vous n'avez pas effectuer de trasaction")
     else:
         mot_pass()
-        argent["solde"] += tran_eff[-1]
+        argent["solde"] += tran_eff[-1]["montant"]
         sauvegarder_solde()
         print("Vous avez annule votre dernier transfert")
         retour_while_true()
@@ -228,7 +252,8 @@ def menu():
         print("3. effectuer un transfert")
         print("4. acheter forfait")
         print("5. annuler une transation")
-        print("6. quitter le programme")
+        print("6. historique des transferts")
+        print("7. quitter le programme")
 
         choix = input("Veuillez faire un choix: ")
         if choix == "1":
@@ -242,6 +267,8 @@ def menu():
         elif choix == "5":
             annule_tran()
         elif choix == "6":
+            sauvegarder_tran()
+        elif choix == "7":
             print("Merci d'avoir utiliser notre service !")
             break
         else:
