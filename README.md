@@ -7,7 +7,7 @@ L’application permet à un utilisateur d’effectuer des opérations financiè
 
 Le programme repose sur l’utilisation de fichiers JSON afin d’assurer la persistance des données (solde et historique des transferts) entre plusieurs exécutions.
 
-Ce projet est réalisé dans le cadre de la formation Développeur Web et Web Mobile (2023), avec pour objectif de renforcer la maîtrise de la logique métier, de l’algorithmique et de la gestion des données persistantes en Python.
+Ce projet est réalisé dans le cadre de la formation Développeur Web / Web Mobile +IA (2025), avec pour objectif de renforcer la maîtrise de la logique métier, de l’algorithmique et de la gestion des données persistantes en Python.
 
 ---
 
